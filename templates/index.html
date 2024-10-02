@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style/main.css">
+</head>
+<body>
+    <div class="container">
+        <h1>QR Code Generator</h1>
+
+        <form id="qr-form">
+            <label for="link">Enter your Link below:</label>
+            <input type="text" id="link" name="link" placeholder="https://www.myweb.com" required>
+            <button type="submit">Generate QR Code</button>
+        </form>
+
+        <div id="qr-result">
+            <h3>Your QR Code:</h3>
+            <img id="qr-image" alt="QR code will appear here">
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('qr-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const link = document.getElementById('link').value;
+
+            fetch('/generate_qr', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ link: link }),
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const img = document.getElementById('qr-image');
+                const url = URL.createObjectURL(blob);
+                img.src = url;
+                img.style.display = 'block';  // Show the image when QR code is generated
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+
+</body>
+</html>
